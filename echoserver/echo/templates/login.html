@@ -1,0 +1,31 @@
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в аккаунт</title>
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'auth_style.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{% url 'book_list' %}" class="navbar-brand">Book store</a>
+            <div class="navbar-auth">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Вход в аккаунт</h2>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Войти в аккаунт</button>
+        </form>
+        <p class="auth-link-text">
+            Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a>
+        </p>
+    </div>
+</body>
+</html>

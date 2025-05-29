@@ -1,0 +1,174 @@
+.container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 900px;
+    position: relative;
+    z-index: 1;
+    border: 2px solid #d2b48c;
+}
+
+.book-item {
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.book-item:last-child {
+    border-bottom: none;
+}
+
+.book-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 10px;
+    align-items: center;
+}
+
+.delete-form {
+    margin: 0;
+    display: flex;
+}
+
+.edit-link,
+.delete-btn,
+.cart-link{
+    flex: 1;
+    min-width: 100px;
+    background-color: #C19A6B;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 12px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.delete-btn {
+    background-color: #8B0000;
+}
+
+.edit-link:hover,
+.cart-link:hover {
+    background-color: #cc824f;
+}
+
+.delete-btn:hover {
+    background-color: #d12929;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.page-link {
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 5px 0;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.page-link:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.page-info {
+    font-size: 14px;
+    color: #333;
+}
+
+.action-link {
+    margin-top: 5px;
+    background-color: #d4a373;
+    color: white;
+    padding: 7px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    display: inline-block;
+}
+
+.action-link:hover {
+    background-color: #f0f0f0;
+    color: #cc824f;
+}
+.filter-form {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.filter-form div {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.filter-form input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    border: 1px solid #C19A6B;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.filter-form :focus{
+    outline: none;
+    box-shadow: 0 0 5px #C19A6B;
+}
+
+.filter-form button {
+    padding: 8px 15px;
+    background-color: #d4a373;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-form button:hover {
+    background-color: #cc824f;
+}
+
+.filter-form .reset-link {
+    padding: 8px 15px;
+    background-color: #8B0000;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+.filter-form .reset-link:hover {
+    background-color: #d12929;
+}

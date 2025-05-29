@@ -1,0 +1,182 @@
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'auth_style.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{% url 'book_list' %}" class="navbar-brand">Book store</a>
+            <div class="navbar-auth">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}" class="auth-link">Личный кабинет</a>
+                    <a href="{% url 'cart_view' %}" class="auth-link">Корзина</a>
+                    <a href="{% url 'order_history' %}" class="auth-link">Мои заказы</a>
+                    <a href="{% url 'logout' %}" class="auth-link logout">Выйти из аккаунта</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="auth-link">Войти в аккаунт</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Регистрация</h2>
+        <form method="post" id="register-form">
+            {% csrf_token %}
+            <div>
+                <label for="id_username">Имя пользователя:</label>
+                <input type="text" id="id_username" name="username" value="{{ form.username.value|default_if_none:'' }}" required>
+                <span id="username-error" class="error"></span>
+                {% if form.username.errors %}
+                    <p class="error">{{ form.username.errors }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_email">Email:</label>
+                <input type="email" id="id_email" name="email" value="{{ form.email.value|default_if_none:'' }}" required>
+                <span id="email-error" class="error"></span>
+                {% if form.email.errors %}
+                    <p class="error">{{ form.email.errors }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_password1">Пароль:</label>
+                <input type="password" id="id_password1" name="password1" required>
+                <span id="password1-error" class="error"></span>
+                {% if form.password1.errors %}
+                    <p class="error">{{ form.password1.errors }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_password2">Подтверждение пароля:</label>
+                <input type="password" id="id_password2" name="password2" required>
+                <span id="password2-error" class="error"></span>
+                {% if form.password2.errors %}
+                    <p class="error">{{ form.password2.errors }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_role">Роль:</label>
+                <select id="id_role" name="role">
+                    <option value="user" {% if form.role.value == 'user' %}selected{% endif %}>User</option>
+                    <option value="admin" {% if form.role.value == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+                {% if form.role.errors %}
+                    <p class="error">{{ form.role.errors }}</p>
+                {% endif %}
+            </div>
+            <button type="submit" id="submit-btn" disabled>Зарегистрироваться</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('register-form');
+            const usernameInput = document.getElementById('id_username');
+            const emailInput = document.getElementById('id_email');
+            const password1Input = document.getElementById('id_password1');
+            const password2Input = document.getElementById('id_password2');
+            const submitBtn = document.getElementById('submit-btn');
+
+            const usernameError = document.getElementById('username-error');
+            const emailError = document.getElementById('email-error');
+            const password1Error = document.getElementById('password1-error');
+            const password2Error = document.getElementById('password2-error');
+
+            let isUsernameValid = false;
+            let isEmailValid = false;
+            let isPassword1Valid = false;
+            let isPassword2Valid = false;
+
+            function updateSubmitButton() {
+                submitBtn.disabled = !(isUsernameValid && isEmailValid && isPassword1Valid && isPassword2Valid);
+            }
+
+            usernameInput.addEventListener('input', function() {
+                const username = usernameInput.value.trim();
+                if (username.length < 3) {
+                    usernameError.textContent = 'Имя пользователя должно быть не менее 3 символов';
+                    isUsernameValid = false;
+                } else {
+                    fetch('/check_username/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        },
+                        body: JSON.stringify({ username: username })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            usernameError.textContent = 'Это имя пользователя уже занято';
+                            isUsernameValid = false;
+                        } else {
+                            usernameError.textContent = '';
+                            isUsernameValid = true;
+                        }
+                        updateSubmitButton();
+                    })
+                    .catch(error => {
+                        usernameError.textContent = 'Ошибка проверки имени пользователя';
+                        isUsernameValid = false;
+                        updateSubmitButton();
+                    });
+                }
+                updateSubmitButton();
+            });
+
+            emailInput.addEventListener('input', function() {
+                const email = emailInput.value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    emailError.textContent = 'Введите корректный email';
+                    isEmailValid = false;
+                } else {
+                    emailError.textContent = '';
+                    isEmailValid = true;
+                }
+                updateSubmitButton();
+            });
+
+            password1Input.addEventListener('input', function() {
+                const password = password1Input.value;
+                if (password.length < 6) {
+                    password1Error.textContent = 'Пароль должен быть не менее 6 символов';
+                    isPassword1Valid = false;
+                } else {
+                    password1Error.textContent = '';
+                    isPassword1Valid = true;
+                }
+
+                if (password2Input.value && password !== password2Input.value) {
+                    password2Error.textContent = 'Пароли не совпадают';
+                    isPassword2Valid = false;
+                } else if (password2Input.value) {
+                    password2Error.textContent = '';
+                    isPassword2Valid = true;
+                }
+                updateSubmitButton();
+            });
+
+            password2Input.addEventListener('input', function() {
+                const password1 = password1Input.value;
+                const password2 = password2Input.value;
+                if (password1 !== password2) {
+                    password2Error.textContent = 'Пароли не совпадают';
+                    isPassword2Valid = false;
+                } else {
+                    password2Error.textContent = '';
+                    isPassword2Valid = true;
+                }
+                updateSubmitButton();
+            });
+        });
+    </script>
+</body>
+</html>

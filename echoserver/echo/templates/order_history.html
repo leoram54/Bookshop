@@ -1,0 +1,51 @@
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История заказов</title>
+    <link rel="stylesheet" href="{% static 'order_history_style.css' %}">
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{% url 'book_list' %}" class="navbar-brand">Book store</a>
+            <div class="navbar-auth">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}" class="auth-link">Личный кабинет</a>
+                    <a href="{% url 'cart_view' %}" class="auth-link">Корзина</a>
+                    <a href="{% url 'order_history' %}" class="auth-link">Мои заказы</a>
+                    <a href="{% url 'logout' %}" class="auth-link logout">Выйти из аккаунта</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="auth-link">Войти в аккаунт</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+<div class="container">
+        <h2>История заказов</h2>
+        {% if orders %}
+            {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <p><strong>Заказ #{{ order.id }}</strong></p>
+                        <p><strong>Дата:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
+                    </div>
+                    <div class="order-details">
+                        <h4>Состав заказа:</h4>
+                        {% for item in order.orderitem_set.all %}
+                            <p>{{ item.book.title }} - {{ item.quantity }} шт. - {{ item.price }} руб.</p>
+                        {% endfor %}
+                    </div>
+                    <div class="order-footer">
+                        <p><strong>Итого:</strong> {{ order.total_price }} руб.</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>У вас пока нет заказов.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

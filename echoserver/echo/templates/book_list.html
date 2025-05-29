@@ -1,0 +1,83 @@
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список книг</title>
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'book_list_style.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{% url 'book_list' %}" class="navbar-brand">Book Shop</a>
+            <div class="navbar-auth">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}" class="auth-link">Личный кабинет</a>
+                    <a href="{% url 'cart_view' %}" class="auth-link">Корзина</a>
+                    <a href="{% url 'order_history' %}" class="auth-link">Мои заказы</a>
+                    <a href="{% url 'logout' %}" class="auth-link logout">Выйти из аккаунта</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="auth-link">Войти в аккаунт</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Список книг</h2>
+        <form method="get" class="filter-form">
+            <div>
+                <label for="title">Название:</label>
+                <input type="text" id="title" name="title" value="{{ title_filter }}">
+            </div>
+            <div>
+                <label for="author">Автор:</label>
+                <input type="text" id="author" name="author" value="{{ author_filter }}">
+            </div>
+            <button type="submit">Фильтровать</button>
+            <a href="{% url 'book_list' %}" class="reset-link">Сбросить</a>
+        </form>
+
+        {% if books %}
+            {% for book in books %}
+                <div class="book-item">
+                    <p>{{ book.title }} - {{ book.author }} - {{ book.price }} руб.</p>
+                    <div class="book-actions">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'add_to_cart' book.id %}" class="cart-link">В корзину</a>
+                        {% endif %}
+                        {% if user.is_authenticated and user.role == 'admin' %}
+                            <a href="{% url 'book_update' book.id %}" class="edit-link">Изменить</a>
+                            <form method="post" action="{% url 'book_delete' book.id %}" class="delete-form">
+                                {% csrf_token %}
+                                <button type="submit" class="delete-btn">Удалить</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Книги не найдены.</p>
+        {% endif %}
+
+        <div class="pagination">
+            {% if books.has_previous %}
+                <a href="?page={{ books.previous_page_number }}{% if title_filter %}&title={{ title_filter }}{% endif %}{% if author_filter %}&author={{ author_filter }}{% endif %}" class="page-link">Предыдущая</a>
+            {% endif %}
+
+            <span class="page-info">Страница {{ books.number }} из {{ books.paginator.num_pages }}</span>
+
+            {% if books.has_next %}
+                <a href="?page={{ books.next_page_number }}{% if title_filter %}&title={{ title_filter }}{% endif %}{% if author_filter %}&author={{ author_filter }}{% endif %}" class="page-link">Следующая</a>
+            {% endif %}
+        </div>
+
+        {% if user.is_authenticated %}
+            <div class="action-links">
+                <a href="{% url 'book_create' %}" class="action-link">Добавить новую книгу</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

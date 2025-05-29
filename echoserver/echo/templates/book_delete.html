@@ -1,0 +1,5 @@
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" style="display:none;">Удалить</button>
+</form>
+<a href="{% url 'book_list' %}">Отменить</a>
