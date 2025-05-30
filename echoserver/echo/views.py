@@ -10,7 +10,6 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 import json
-# Create your views here.
 User = get_user_model()
 
 def register_view(request):

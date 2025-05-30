@@ -45,22 +45,12 @@ class RegisterForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         raw_password = self.cleaned_data['password1']
-        ph = PasswordHasher()  # Создаем объект PasswordHasher
-        hashed_password = ph.hash(raw_password)  # Хешируем пароль с помощью Argon2
-        user.password = hashed_password  # Сохраняем хешированный пароль
+        ph = PasswordHasher()
+        hashed_password = ph.hash(raw_password)
+        user.password = hashed_password
         if commit:
             user.save()
         return user
-
-
-# class LoginForm(AuthenticationForm):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['username'].label = 'Имя пользователя'
-#         self.fields['password'].label = 'Пароль'
-#     class Meta:
-#         model = User
-#         fields = ['username', 'password']
 
 
 class LoginForm(forms.Form):
@@ -79,7 +69,7 @@ class LoginForm(forms.Form):
                 raise forms.ValidationError("Неверное имя пользователя или пароль")
             ph = PasswordHasher()
             try:
-                ph.verify(user.password, password)  # Проверяем, совпадает ли пароль
+                ph.verify(user.password, password)
             except exceptions.VerifyMismatchError:
                 raise forms.ValidationError("Неверное имя пользователя или пароль")
             cleaned_data['user'] = user
